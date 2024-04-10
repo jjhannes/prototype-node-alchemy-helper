@@ -90,51 +90,33 @@ function getCommonEffects(ingredient1, ingredient2, goodness = 0) {
     }, []);
 }
 
-const givenIngredient = "Diamond";
-const givenEffects = [ "Water Walking" ];
-const givenBadEffect = "Drain Fatigue";
-const givenGoodEffect = "Fortify Speed";
-const givenIngredientEffectFalse = "Restore Strength";
-const givenEffectIngredientFalse = "Bloat";
-const givenIngredientEffectTrue = "Restore Magicka";
-const givenEffectIngredientTrue = "Comberry";
-const givenCommonEffectIngredient1True = "Black Anther";
-const givenCommonEffectIngredient2True = "Bungler's Bane";
-const givenCommonEffectIngredient1False = "Coda Flower";
-const givenCommonEffectIngredient2False = "Crab Meat";
-const givenCommonGoodBadEffectsIngredient1True = "Kwama Cuttle";
-const givenCommonGoodBadEffectsIngredient2True = "Violet Coprinus";
-const givenCommonGoodEffectsIngredient1True = "";
-const givenCommonGoodEffectsIngredient2True = "";
-const givenCommonGoodEffectsIngredient1False = "";
-const givenCommonGoodEffectsIngredient2False = "";
-const givenCommonBadEffectsIngredient1True = "";
-const givenCommonBadEffectsIngredient2True = "";
-const givenCommonBadEffectsIngredient1False = "";
-const givenCommonBadEffectsIngredient2False = "";
+const desiredEffects = [ "Water Walking", "Fortify Speed" ];
 
-const ingredientEffects = getEffectsForIngredient(givenIngredient);
-const effectIngredients = getIngredientsWithEffects(givenEffects);
-const isBadEffectBad = isBadEffect(givenBadEffect);
-const isGoodEffectBad = isBadEffect(givenGoodEffect);
-const isIngredientEffectFalse = isIngredientEffect(givenEffectIngredientFalse, givenIngredientEffectFalse);
-const isIngredientEffectTrue = isIngredientEffect(givenEffectIngredientTrue, givenIngredientEffectTrue);
-const hasCommonEffetsTrue = hasCommonEffects(givenCommonEffectIngredient1True, givenCommonEffectIngredient2True);
-const hasCommonEffetsFalse = hasCommonEffects(givenCommonEffectIngredient1False, givenCommonEffectIngredient2False);
-const theCommonEffectsTrue = getCommonEffects(givenCommonEffectIngredient1True, givenCommonEffectIngredient2True);
-const theCommonEffectsFalse = getCommonEffects(givenCommonEffectIngredient1False, givenCommonEffectIngredient2False);
-const hasCommonGoodEffectsTrue = hasCommonEffects(givenCommonGoodBadEffectsIngredient1True, givenCommonGoodBadEffectsIngredient2True, 1);
-const hasCommonBadEffectsTrue = hasCommonEffects(givenCommonGoodBadEffectsIngredient1True, givenCommonGoodBadEffectsIngredient2True, -1);
-const theCommonGoodEffectsTrue = getCommonEffects(givenCommonGoodBadEffectsIngredient1True, givenCommonGoodBadEffectsIngredient2True, 1);
-const theCommonBadEffectsTrue = getCommonEffects(givenCommonGoodBadEffectsIngredient1True, givenCommonGoodBadEffectsIngredient2True, -1);
+for (var desiredEffect of desiredEffects) {
+    const ingredientsWithDesiredEffect = getIngredientsWithEffects([desiredEffect]);
 
-console.log(`${givenIngredient} has ${ingredientEffects.length} effects: ${ingredientEffects}`);
-console.log(`${givenEffects} found in ${effectIngredients.length} ingredients: ${effectIngredients}`);
-console.log(`${givenBadEffect} is ${isBadEffectBad ? "bad" : "good"}`);
-console.log(`${givenGoodEffect} is ${isGoodEffectBad ? "bad" : "good"}`);
-console.log(`${givenIngredientEffectFalse} is${isIngredientEffectFalse ? "" : " not"} an effect of ${givenEffectIngredientFalse}`);
-console.log(`${givenIngredientEffectTrue} is${isIngredientEffectTrue ? "" : " not"} an effect of ${givenEffectIngredientTrue}`);
-console.log(`${givenCommonEffectIngredient1True} and ${givenCommonEffectIngredient2True} ${hasCommonEffetsTrue ? "has" : "doesn't have"} common effects: ${theCommonEffectsTrue.length ? theCommonEffectsTrue : "None"}`);
-console.log(`${givenCommonEffectIngredient1False} and ${givenCommonEffectIngredient2False} ${hasCommonEffetsFalse ? "has" : "doesn't have"} common effects: ${theCommonEffectsFalse.length ? theCommonEffectsFalse : "None"}`);
-console.log(`${givenCommonGoodBadEffectsIngredient1True} and ${givenCommonGoodBadEffectsIngredient2True} ${ hasCommonGoodEffectsTrue ? "has" : "doesn't have" } common good effects: ${ theCommonGoodEffectsTrue.length ? theCommonGoodEffectsTrue : "None" }`);
-console.log(`${givenCommonGoodBadEffectsIngredient1True} and ${givenCommonGoodBadEffectsIngredient2True} ${ hasCommonBadEffectsTrue ? "has" : "doesn't have" } common bad effects: ${ theCommonBadEffectsTrue.length ? theCommonBadEffectsTrue : "None" }`);
+    for (var i = 0; i < ingredientsWithDesiredEffect.length; i++) {
+        var ingredientWithDesiredEffect = ingredientsWithDesiredEffect[i];
+
+        for (var j = i + 1; j < ingredientsWithDesiredEffect.length; j++) {
+            var partnerWithDesiredEffect = ingredientsWithDesiredEffect[j];
+            var commonGoodEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, 1);
+            var commonBadEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, -1);
+
+            if (!!commonGoodEffects.length || !!commonBadEffects.length) {
+                console.log(`A potion made with [${ingredientWithDesiredEffect}] & [${partnerWithDesiredEffect}] will have:`);
+                
+                if (!!commonGoodEffects.length) {
+                    console.log(` - ${commonGoodEffects.length} good effects: ${commonGoodEffects}`);
+                }
+                if (!!commonBadEffects.length) {
+                    console.log(` - ${commonBadEffects.length} bad effects: ${commonBadEffects}`);
+                }
+            }
+        }
+    }
+    
+    // console.log(`Ingredients with [${desiredEffect}] are [${ingredientsWithDesiredEffect}]`);
+}
+
+
