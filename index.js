@@ -44,53 +44,99 @@ function isBadEffect(effect) {
         effect.includes("vampirism");
 }
 
+function getCommonEffects(ingredients) {
+    const ingredientsEffects = ingredients.map(ie => getEffectsForIngredient(ie));
+    let intersection = [];
 
+    for (let primary = 0; primary < ingredientsEffects.length; primary++) {
+        let primarySet = ingredientsEffects[primary];
 
-const comboMin = 2;
-const comboLimit = 4;
-var scaffold;
-var totalElements = 0;
-var validCombos = 0;
+        for (let secondary = primary + 1; secondary < ingredientsEffects.length; secondary++) {
+            let secondarySet = ingredientsEffects[secondary];
+            let matches = primarySet.filter(pe => secondarySet.includes(pe));
 
-if (!scaffold) {
-    scaffold = [];
-}
-
-// Maximum
-for (var dim4 = 0; dim4 <= comboLimit; dim4++) {
-    scaffold[dim4] = scaffold[dim4] || [];
-    
-    for (var dim3 = 0; dim3 <= comboLimit; dim3++) {
-        scaffold[dim4][dim3] = scaffold[dim4][dim3] || [];
-        
-        // Minimum
-        for (var dim2 = 0; dim2 <= comboLimit; dim2++) {
-            scaffold[dim4][dim3][dim2] = scaffold[dim4][dim3][dim2] || [];
-        
-            for (var dim1 = 0; dim1 <= comboLimit; dim1++) {
-                if (dim4 + dim3 + dim2 + dim1 >= comboMin && dim4 + dim3 + dim2 + dim1 <= comboLimit) {
-                    scaffold[dim4][dim3][dim2][dim1] = `(${dim4}, ${dim3}, ${dim2}, ${dim1})`;
-
-                    validCombos++;
-                }
-
-                totalElements++;
+            if (!!matches.length) {
+                //intersection = [...matches];
+                //intersection = intersection.concat(matches);
+                intersection = matches.reduce((accumulator, effect) => {
+                    if (!accumulator.includes(effect)) {
+                        accumulator.push(effect);
+                    }
+                    
+                    return accumulator;
+                }, intersection)
             }
         }
     }
+    
+    return intersection;
 }
 
-console.log(scaffold);
-console.log(`Fin: ${validCombos} / ${totalElements}`);
+const desiredEffects = [
+    "Water Walking",
+    "Fortify Speed",
+    "Restore Fatigue",
+]
+const possibleIngredients = getIngredientsWithEffects(desiredEffects);
+const wetrunIngredients = [ "Kagouti Hide", "Kwama Cuttle", "Scales", "Shalk Resin" ];
+const fishIngredients = [ "Scrib Jerky", "Scales", "Luminous Russula", "Hackle-Lo Leaf" ];
+const healpotIngredients = [ "Marshmerrow", "Wickwheat" ];
+const manapotIngredients = [ "Belladonna Berries", "Comberry" ]
+const commonEffects = getCommonEffects(manapotIngredients);
 
-const waterWalkingIngredients = ["Ampoule Pod", "Kwama Cuttle", "Scales", "Violet Coprinus"];
-const fortifySpeedIngredients = ["Kagouti Hide", "Meadow Rye", "Moon Sugar", "Nirthfly Stalks", "Shalk Resin", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt"];
-const restoreFatigueIngredients = ["Bread", "Chokeweed", "Crab Meat", "Hackle-Lo Leaf", "Hound Meat", "Large Kwama Egg", "Saltrice", "Scrib Jerky", "Scuttle", "Small Kwama Egg"];
-const effectIngredients = {
-    "Water Walking": waterWalkingIngredients,
-    "Fortify Speed": fortifySpeedIngredients,
-    "Restore Fatigue": restoreFatigueIngredients
-};
+for (let combo = 2; combo <= 4; combo++) {
+    // Build a combo
+}
+
+// console.log(possibleIngredients);
+console.log(commonEffects);
+console.log(`Fin`);
+
+// const comboMin = 2;
+// const comboLimit = 4;
+// var scaffold;
+// var totalElements = 0;
+// var validCombos = 0;
+
+// if (!scaffold) {
+//     scaffold = [];
+// }
+
+// // Maximum
+// for (var dim4 = 0; dim4 <= comboLimit; dim4++) {
+//     scaffold[dim4] = scaffold[dim4] || [];
+    
+//     for (var dim3 = 0; dim3 <= comboLimit; dim3++) {
+//         scaffold[dim4][dim3] = scaffold[dim4][dim3] || [];
+        
+//         // Minimum
+//         for (var dim2 = 0; dim2 <= comboLimit; dim2++) {
+//             scaffold[dim4][dim3][dim2] = scaffold[dim4][dim3][dim2] || [];
+        
+//             for (var dim1 = 0; dim1 <= comboLimit; dim1++) {
+//                 if (dim4 + dim3 + dim2 + dim1 >= comboMin && dim4 + dim3 + dim2 + dim1 <= comboLimit) {
+//                     scaffold[dim4][dim3][dim2][dim1] = `(${dim4}, ${dim3}, ${dim2}, ${dim1})`;
+
+//                     validCombos++;
+//                 }
+
+//                 totalElements++;
+//             }
+//         }
+//     }
+// }
+
+// console.log(scaffold);
+// console.log(`Fin: ${validCombos} / ${totalElements}`);
+
+// const waterWalkingIngredients = ["Ampoule Pod", "Kwama Cuttle", "Scales", "Violet Coprinus"];
+// const fortifySpeedIngredients = ["Kagouti Hide", "Meadow Rye", "Moon Sugar", "Nirthfly Stalks", "Shalk Resin", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt"];
+// const restoreFatigueIngredients = ["Bread", "Chokeweed", "Crab Meat", "Hackle-Lo Leaf", "Hound Meat", "Large Kwama Egg", "Saltrice", "Scrib Jerky", "Scuttle", "Small Kwama Egg"];
+// const effectIngredients = {
+//     "Water Walking": waterWalkingIngredients,
+//     "Fortify Speed": fortifySpeedIngredients,
+//     "Restore Fatigue": restoreFatigueIngredients
+// };
 
 // function hasCommonEffects(ingredient1, ingredient2, goodness = 0) {
 //     const ingredient1Effects = getEffectsForIngredient(ingredient1);
