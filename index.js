@@ -153,15 +153,18 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
 //console.log(commonEffects);
 
 const desiredEffects = [
-    // "Swift Swim",
-    // "Water Breathing"
+    "Swift Swim",
+    "Water Breathing",
+    "Restore Fatigue"
 
-    "Water Walking",
-    "Fortify Speed",
+    // "Water Walking",
+    // "Fortify Speed",
     //"Restore Fatigue"
-]
+];
+const excludeAllBadEffects = true;
+const matchDesiredEffectsExactly = true;
 const possibleIngredients = getIngredientsWithEffects(desiredEffects);
-const recipes = [];
+let recipes = [];
 
 // Two ingredients
 for (let primary = 0; primary < possibleIngredients.length; primary++) {
@@ -221,6 +224,22 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
 }
 
 //console.log(possibleIngredients);
+
+if (excludeAllBadEffects) {
+    let countBeforeFilter = recipes.length;
+
+    recipes = recipes.filter(r => r.badEffects.length < 1);
+
+    console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with bad effects filtered out.`);
+}
+
+if (matchDesiredEffectsExactly) {
+    let countBeforeFilter = recipes.length;
+
+    recipes = recipes.filter(r => r.goodEffects.length == desiredEffects.length);
+
+    console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with additional good effects filtered out.`);
+}
 
 let sortedRecipes = recipes.sort(sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc);
 let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
