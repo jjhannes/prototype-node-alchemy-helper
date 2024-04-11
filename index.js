@@ -44,67 +44,107 @@ function isBadEffect(effect) {
         effect.includes("vampirism");
 }
 
-function hasCommonEffects(ingredient1, ingredient2, goodness = 0) {
-    const ingredient1Effects = getEffectsForIngredient(ingredient1);
-    const ingredient2Effects = getEffectsForIngredient(ingredient2);
 
-    for (var ingredient1Effect of ingredient1Effects) {
-        if (!!ingredient2Effects.find(i2e => i2e == ingredient1Effect)) {
-            if (goodness === 0) {
-                return true;
-            }
-            else {
-                if (goodness === -1 && isBadEffect(ingredient1Effect)) {
-                    return true;
+
+const comboMin = 2;
+const comboLimit = 4;
+var scaffold;
+var totalElements = 0;
+var validCombos = 0;
+
+if (!scaffold) {
+    scaffold = [];
+}
+
+// Maximum
+for (var dim4 = 0; dim4 <= comboLimit; dim4++) {
+    scaffold[dim4] = scaffold[dim4] || [];
+    
+    for (var dim3 = 0; dim3 <= comboLimit; dim3++) {
+        scaffold[dim4][dim3] = scaffold[dim4][dim3] || [];
+        
+        // Minimum
+        for (var dim2 = 0; dim2 <= comboLimit; dim2++) {
+            scaffold[dim4][dim3][dim2] = scaffold[dim4][dim3][dim2] || [];
+        
+            for (var dim1 = 0; dim1 <= comboLimit; dim1++) {
+                if (dim4 + dim3 + dim2 + dim1 >= comboMin && dim4 + dim3 + dim2 + dim1 <= comboLimit) {
+                    scaffold[dim4][dim3][dim2][dim1] = `(${dim4}, ${dim3}, ${dim2}, ${dim1})`;
+
+                    validCombos++;
                 }
-                else if (goodness === 1 && !isBadEffect(ingredient1Effect)) {
-                    return true;
-                }
+
+                totalElements++;
             }
         }
     }
-
-    return false;
 }
 
-function getCommonEffects(ingredient1, ingredient2, goodness = 0) {
-    const ingredient1Effects = getEffectsForIngredient(ingredient1);
-    const ingredient2Effects = getEffectsForIngredient(ingredient2);
+console.log(scaffold);
+console.log(`Fin: ${validCombos} / ${totalElements}`);
 
-    return ingredient1Effects.reduce((accumulator, effect, index, effects) => {
-        if (!!ingredient2Effects.find(i2e => i2e == effect)) {
-            if (goodness === 0) {
-                accumulator.push(effect);
-            }
-            else {
-                if (goodness === -1 && isBadEffect(effect)) {
-                    accumulator.push(effect);
-                }
-                else if (goodness === 1 && !isBadEffect(effect)) {
-                    accumulator.push(effect);
-                }
-            }
-        }
+const waterWalkingIngredients = ["Ampoule Pod", "Kwama Cuttle", "Scales", "Violet Coprinus"];
+const fortifySpeedIngredients = ["Kagouti Hide", "Meadow Rye", "Moon Sugar", "Nirthfly Stalks", "Shalk Resin", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt"];
+const restoreFatigueIngredients = ["Bread", "Chokeweed", "Crab Meat", "Hackle-Lo Leaf", "Hound Meat", "Large Kwama Egg", "Saltrice", "Scrib Jerky", "Scuttle", "Small Kwama Egg"];
+const effectIngredients = {
+    "Water Walking": waterWalkingIngredients,
+    "Fortify Speed": fortifySpeedIngredients,
+    "Restore Fatigue": restoreFatigueIngredients
+};
 
-        return accumulator;
-    }, []);
-}
+// function hasCommonEffects(ingredient1, ingredient2, goodness = 0) {
+//     const ingredient1Effects = getEffectsForIngredient(ingredient1);
+//     const ingredient2Effects = getEffectsForIngredient(ingredient2);
 
-function getCommonEffectsForManyIngredients(ingredients) {
-    // TODO
-}
+//     for (var ingredient1Effect of ingredient1Effects) {
+//         if (!!ingredient2Effects.find(i2e => i2e == ingredient1Effect)) {
+//             if (goodness === 0) {
+//                 return true;
+//             }
+//             else {
+//                 if (goodness === -1 && isBadEffect(ingredient1Effect)) {
+//                     return true;
+//                 }
+//                 else if (goodness === 1 && !isBadEffect(ingredient1Effect)) {
+//                     return true;
+//                 }
+//             }
+//         }
+//     }
 
-function intersect(collections) {
-    return collections.reduce((a, c) => a.filter(i => c.includes(i)));
-}
+//     return false;
+// }
 
+// function getCommonEffects(ingredient1, ingredient2, goodness = 0) {
+//     const ingredient1Effects = getEffectsForIngredient(ingredient1);
+//     const ingredient2Effects = getEffectsForIngredient(ingredient2);
 
+//     return ingredient1Effects.reduce((accumulator, effect, index, effects) => {
+//         if (!!ingredient2Effects.find(i2e => i2e == effect)) {
+//             if (goodness === 0) {
+//                 accumulator.push(effect);
+//             }
+//             else {
+//                 if (goodness === -1 && isBadEffect(effect)) {
+//                     accumulator.push(effect);
+//                 }
+//                 else if (goodness === 1 && !isBadEffect(effect)) {
+//                     accumulator.push(effect);
+//                 }
+//             }
+//         }
 
-function createComboScaffold(effectCount = 1) {
-    const dimensions = effectCount + 1;
+//         return accumulator;
+//     }, []);
+// }
 
-    
-}
+// function getCommonEffectsForManyIngredients(ingredients) {
+//     // TODO
+// }
+
+// function intersect(collections) {
+//     return collections.reduce((a, c) => a.filter(i => c.includes(i)));
+// }
 
 // const desiredEffects = [ "Water Walking", "Fortify Speed" ];
 // const effectIngredients = desiredEffects.reduce((accumulator, desiredEffect) => {
@@ -123,28 +163,17 @@ function createComboScaffold(effectCount = 1) {
 // }, {});
 
 // 2x2
-const combos2x2 = [ [], [] ];
+// const combos2x2 = [ [], [] ];
 
-// 3x3
-const combos3x3 = [ [ [], [] ], [ [], [] ] ];
+// // 3x3
+// const combos3x3 = [ [ [], [] ], [ [], [] ] ];
 
-// 4x4
-const combos4x4 = [ [ [ [], [] ], [ [], [] ] ], [ [ [], [] ], [ [], [] ] ] ];
+// // 4x4
+// const combos4x4 = [ [ [ [], [] ], [ [], [] ] ], [ [ [], [] ], [ [], [] ] ] ];
 
-console.log(getIngredientsWithEffects([ "Water Walking" ]));
-console.log(getIngredientsWithEffects([ "Fortify Speed" ]));
-console.log(getIngredientsWithEffects([ "Restore Fatigue" ]));
-
-const waterWalkingIngredients = ["Ampoule Pod", "Kwama Cuttle", "Scales", "Violet Coprinus"];
-const fortifySpeedIngredients = ["Kagouti Hide", "Meadow Rye", "Moon Sugar", "Nirthfly Stalks", "Shalk Resin", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt"];
-const restoreFatigueIngredients = ["Bread", "Chokeweed", "Crab Meat", "Hackle-Lo Leaf", "Hound Meat", "Large Kwama Egg", "Saltrice", "Scrib Jerky", "Scuttle", "Small Kwama Egg"];
-const effectIngredients = {
-    "Water Walking": waterWalkingIngredients,
-    "Fortify Speed": fortifySpeedIngredients,
-    "Restore Fatigue": restoreFatigueIngredients
-};
-
-
+// console.log(getIngredientsWithEffects([ "Water Walking" ]));
+// console.log(getIngredientsWithEffects([ "Fortify Speed" ]));
+// console.log(getIngredientsWithEffects([ "Restore Fatigue" ]));
 
 //console.log(effectIngredients);
 
