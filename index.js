@@ -219,6 +219,7 @@ if (unavailableIngredients.length > 0) {
     }
 }
 
+let _loops = 0;
 let recipes = [];
 
 // Two ingredients
@@ -226,6 +227,7 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
     let primaryIngredient = possibleIngredients[primary];
 
     for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+        _loops++;
         let secondaryIngredient = possibleIngredients[secondary];
         let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
 
@@ -244,6 +246,7 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
         let secondaryIngredient = possibleIngredients[secondary];
         
         for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
+            _loops++;
             let tertiaryIngredient = possibleIngredients[tertiary];
             let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
 
@@ -266,6 +269,7 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
             let tertiaryIngredient = possibleIngredients[tertiary];
             
             for (let quaternary = tertiary + 1; quaternary < possibleIngredients.length; quaternary++) {
+                _loops++;
                 let quaternaryIngredient = possibleIngredients[quaternary];
                 let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
     
@@ -305,7 +309,7 @@ let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
 
 formattedRecipes.map(fr => console.log(JSON.stringify(fr)));
 
-console.log(`\nFin`);
+console.log(`\nFin (${_loops})`);
 
 // const comboMin = 2;
 // const comboLimit = 4;
