@@ -56,8 +56,6 @@ function getCommonEffects(ingredients) {
             let matches = primarySet.filter(pe => secondarySet.includes(pe));
 
             if (!!matches.length) {
-                //intersection = [...matches];
-                //intersection = intersection.concat(matches);
                 intersection = matches.reduce((accumulator, effect) => {
                     if (!accumulator.includes(effect)) {
                         accumulator.push(effect);
@@ -72,24 +70,84 @@ function getCommonEffects(ingredients) {
     return intersection;
 }
 
+// Working!
+// const wetrunIngredients = [ "Kagouti Hide", "Kwama Cuttle", "Scales", "Shalk Resin" ];
+// const fishIngredients = [ "Scrib Jerky", "Scales", "Luminous Russula", "Hackle-Lo Leaf" ];
+// const healpotIngredients = [ "Marshmerrow", "Wickwheat" ];
+// const manapotIngredients = [ "Belladonna Berries", "Comberry" ];
+// const cureallIngredients = [ "Willow Anther", "Netch Leather", "Muck" ];
+// const commonEffects = getCommonEffects(wetrunIngredients);
+
+//console.log(commonEffects);
+
 const desiredEffects = [
     "Water Walking",
     "Fortify Speed",
     "Restore Fatigue",
 ]
 const possibleIngredients = getIngredientsWithEffects(desiredEffects);
-const wetrunIngredients = [ "Kagouti Hide", "Kwama Cuttle", "Scales", "Shalk Resin" ];
-const fishIngredients = [ "Scrib Jerky", "Scales", "Luminous Russula", "Hackle-Lo Leaf" ];
-const healpotIngredients = [ "Marshmerrow", "Wickwheat" ];
-const manapotIngredients = [ "Belladonna Berries", "Comberry" ]
-const commonEffects = getCommonEffects(manapotIngredients);
 
-for (let combo = 2; combo <= 4; combo++) {
-    // Build a combo
+// for (let combo = 2; combo <= 4; combo++) {
+//     // Build a combo
+    
+// }
+
+// Two ingredients
+for (let primary = 0; primary < possibleIngredients.length; primary++) {
+    let primaryIngredient = possibleIngredients[primary];
+
+    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+        let secondaryIngredient = possibleIngredients[secondary];
+        let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
+
+        if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+            console.log(`${primaryIngredient} & ${secondaryIngredient} = [${commonEffects}]`);
+        }
+    }
 }
 
-// console.log(possibleIngredients);
-console.log(commonEffects);
+// Three ingredients
+for (let primary = 0; primary < possibleIngredients.length; primary++) {
+    let primaryIngredient = possibleIngredients[primary];
+
+    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+        let secondaryIngredient = possibleIngredients[secondary];
+        
+        for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
+            let tertiaryIngredient = possibleIngredients[tertiary];
+            let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+
+            if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} = [${commonEffects}]`);
+            }
+        }
+    }
+}
+
+// Four ingredients
+for (let primary = 0; primary < possibleIngredients.length; primary++) {
+    let primaryIngredient = possibleIngredients[primary];
+
+    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+        let secondaryIngredient = possibleIngredients[secondary];
+        
+        for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
+            let tertiaryIngredient = possibleIngredients[tertiary];
+            
+            for (let quaternary = secondary + 1; quaternary < possibleIngredients.length; quaternary++) {
+                let quaternaryIngredient = possibleIngredients[quaternary];
+                let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+    
+                if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                    console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} & ${quaternaryIngredient} = [${commonEffects}]`);
+                }
+            }
+        }
+    }
+}
+
+//console.log(possibleIngredients);
+
 console.log(`Fin`);
 
 // const comboMin = 2;
