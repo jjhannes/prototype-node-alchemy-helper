@@ -90,33 +90,148 @@ function getCommonEffects(ingredient1, ingredient2, goodness = 0) {
     }, []);
 }
 
-const desiredEffects = [ "Water Walking", "Fortify Speed" ];
-
-for (var desiredEffect of desiredEffects) {
-    const ingredientsWithDesiredEffect = getIngredientsWithEffects([desiredEffect]);
-
-    for (var i = 0; i < ingredientsWithDesiredEffect.length; i++) {
-        var ingredientWithDesiredEffect = ingredientsWithDesiredEffect[i];
-
-        for (var j = i + 1; j < ingredientsWithDesiredEffect.length; j++) {
-            var partnerWithDesiredEffect = ingredientsWithDesiredEffect[j];
-            var commonGoodEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, 1);
-            var commonBadEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, -1);
-
-            if (!!commonGoodEffects.length || !!commonBadEffects.length) {
-                console.log(`A potion made with [${ingredientWithDesiredEffect}] & [${partnerWithDesiredEffect}] will have:`);
-                
-                if (!!commonGoodEffects.length) {
-                    console.log(` - ${commonGoodEffects.length} good effects: ${commonGoodEffects}`);
-                }
-                if (!!commonBadEffects.length) {
-                    console.log(` - ${commonBadEffects.length} bad effects: ${commonBadEffects}`);
-                }
-            }
-        }
-    }
-    
-    // console.log(`Ingredients with [${desiredEffect}] are [${ingredientsWithDesiredEffect}]`);
+function getCommonEffectsForManyIngredients(ingredients) {
+    // TODO
 }
+
+function intersect(collections) {
+    return collections.reduce((a, c) => a.filter(i => c.includes(i)));
+}
+
+
+
+function createComboScaffold(effectCount = 1) {
+    const dimensions = effectCount + 1;
+
+    
+}
+
+// const desiredEffects = [ "Water Walking", "Fortify Speed" ];
+// const effectIngredients = desiredEffects.reduce((accumulator, desiredEffect) => {
+//     var accEffect = Object.keys(accumulator).find(effect => effect === desiredEffect);
+//     var ingredientsWithEffect = getIngredientsWithEffects([ desiredEffect ]);
+
+//     if (!accEffect) {
+//         accumulator[desiredEffect] = ingredientsWithEffect;
+//     }
+//     else {
+//         accumulator[desiredEffect] = [...new Set(accumulator[desiredEffect].map(i => i))];
+//         //accumulator[desiredEffect] = accumulator[desiredEffect].concat(ingredientsWithEffect).dis;
+//     }
+
+//     return accumulator;
+// }, {});
+
+// 2x2
+const combos2x2 = [ [], [] ];
+
+// 3x3
+const combos3x3 = [ [ [], [] ], [ [], [] ] ];
+
+// 4x4
+const combos4x4 = [ [ [ [], [] ], [ [], [] ] ], [ [ [], [] ], [ [], [] ] ] ];
+
+console.log(getIngredientsWithEffects([ "Water Walking" ]));
+console.log(getIngredientsWithEffects([ "Fortify Speed" ]));
+console.log(getIngredientsWithEffects([ "Restore Fatigue" ]));
+
+const waterWalkingIngredients = ["Ampoule Pod", "Kwama Cuttle", "Scales", "Violet Coprinus"];
+const fortifySpeedIngredients = ["Kagouti Hide", "Meadow Rye", "Moon Sugar", "Nirthfly Stalks", "Shalk Resin", "Snow Bear Pelt", "Snow Wolf Pelt", "Wolf Pelt"];
+const restoreFatigueIngredients = ["Bread", "Chokeweed", "Crab Meat", "Hackle-Lo Leaf", "Hound Meat", "Large Kwama Egg", "Saltrice", "Scrib Jerky", "Scuttle", "Small Kwama Egg"];
+const effectIngredients = {
+    "Water Walking": waterWalkingIngredients,
+    "Fortify Speed": fortifySpeedIngredients,
+    "Restore Fatigue": restoreFatigueIngredients
+};
+
+
+
+//console.log(effectIngredients);
+
+// const restorFatigueEffect = "Restore Fatigue";
+// const restoreFatigueIngredients = getIngredientsWithEffects([ restorFatigueEffect ]);
+
+// console.log(restoreFatigueIngredients);
+
+// const primaryEffectIngredients = effectIngredients["Water Walking"];
+// const secondaryEffectIngredients = effectIngredients["Fortify Speed"];
+
+// for (var pc = 4; pc >= 0; pc--) {
+//     for (var sc = 0; sc <= 4; sc++) {
+//         if (pc + sc >= 2 && pc + sc <= 4) {
+            
+
+//             console.log(`(${pc}, ${sc})`);
+//         }
+//     }
+// }
+
+// for (var desiredEffect of desiredEffects) {
+//     var ingredientsWithEffect = getIngredientsWithEffects([ desiredEffect ]);
+
+//     console.log(`[${desiredEffect}] obtained from [${ingredientsWithEffect}]`);
+// }
+
+/*
+Water Walking = [ A, B, C, D ]
+Fortify Speed = [ E, F, G, H, I, J, K, L ]
+
+This, Water Walking & Fortify Speed =:
+[ A, B, E, F ]      [ A, C, E, F ]      [ A, D, E, F ]      [ B, C, E, F ]      [ B, D, E, F ]      [ C, D, E, F ]
+[ A, B, E, G ]      [ A, C, E, G ]      [ A, D, E, G ]      [ B, C, E, G ]      [ B, D, E, G ]      [ C, D, E, G ]
+[ A, B, E, H ]      [ A, C, E, H ]      [ A, D, E, H ]      [ B, C, E, H ]      [ B, D, E, H ]      [ C, D, E, H ]
+[ A, B, E, I ]      [ A, C, E, I ]      [ A, D, E, I ]      [ B, C, E, I ]      [ B, D, E, I ]      [ C, D, E, I ]
+[ A, B, E, J ]      [ A, C, E, J ]      [ A, D, E, J ]      [ B, C, E, J ]      [ B, D, E, J ]      [ C, D, E, J ]
+[ A, B, E, K ]      [ A, C, E, K ]      [ A, D, E, K ]      [ B, C, E, K ]      [ B, D, E, K ]      [ C, D, E, K ]
+[ A, B, E, L ]      [ A, C, E, L ]      [ A, D, E, L ]      [ B, C, E, L ]      [ B, D, E, L ]      [ C, D, E, L ]
+
+[ A, B, F, G ]      [ A, C, F, G ]      [ A, D, F, G ]      [ B, C, F, G ]      [ B, D, F, G ]      [ C, D, F, G ]
+[ A, B, F, H ]      [ A, C, F, H ]      [ A, D, F, H ]      [ B, C, F, H ]      [ B, D, F, H ]      [ C, D, F, H ]
+[ A, B, F, I ]      [ A, C, F, I ]      [ A, D, F, I ]      [ B, C, F, I ]      [ B, D, F, I ]      [ C, D, F, I ]
+[ A, B, F, J ]      [ A, C, F, J ]      [ A, D, F, J ]      [ B, C, F, J ]      [ B, D, F, J ]      [ C, D, F, J ]
+[ A, B, F, K ]      [ A, C, F, K ]      [ A, D, F, K ]      [ B, C, F, K ]      [ B, D, F, K ]      [ C, D, F, K ]
+[ A, B, F, L ]      [ A, C, F, L ]      [ A, D, F, L ]      [ B, C, F, L ]      [ B, D, F, L ]      [ C, D, F, L ]
+
+[ A, B, G, H ]      [ A, C, G, H ]      [ A, D, G, H ]      [ B, C, G, H ]      [ B, D, G, H ]      [ C, D, G, H ]
+[ A, B, G, I ]      [ A, C, G, I ]      [ A, D, G, I ]      [ B, C, G, I ]      [ B, D, G, I ]      [ C, D, G, I ]
+[ A, B, G, J ]      [ A, C, G, J ]      [ A, D, G, J ]      [ B, C, G, J ]      [ B, D, G, J ]      [ C, D, G, J ]
+[ A, B, G, K ]      [ A, C, G, K ]      [ A, D, G, K ]      [ B, C, G, K ]      [ B, D, G, K ]      [ C, D, G, K ]
+[ A, B, G, L ]      [ A, C, G, L ]      [ A, D, G, L ]      [ B, C, G, L ]      [ B, D, G, L ]      [ C, D, G, L ]
+
+[ A, B, H, I ]      [ A, C, H, I ]      [ A, D, H, I ]      [ B, C, H, I ]      [ B, C, H, I ]      [ C, C, H, I ]
+[ A, B, H, J ]      [ A, C, H, J ]      [ A, D, H, J ]      [ B, C, H, J ]      [ B, C, H, J ]      [ C, C, H, J ]
+[ A, B, H, K ]      [ A, C, H, K ]      [ A, D, H, K ]      [ B, C, H, K ]      [ B, C, H, K ]      [ C, C, H, K ]
+[ A, B, H, L ]      [ A, C, H, L ]      [ A, D, H, L ]      [ B, C, H, L ]      [ B, C, H, L ]      [ C, C, H, L ]
+
+[ A, B, I, J ]      [ A, C, I, J ]      [ A, D, I, J ]      [ B, C, I, J ]      [ B, D, I, J ]      [ C, D, I, J ]
+[ A, B, I, K ]      [ A, C, I, K ]      [ A, D, I, K ]      [ B, C, I, K ]      [ B, D, I, K ]      [ C, D, I, K ]
+[ A, B, I, L ]      [ A, C, I, L ]      [ A, D, I, L ]      [ B, C, I, L ]      [ B, D, I, L ]      [ C, D, I, L ]
+
+[ A, B, J, K ]      [ A, C, J, K ]      [ A, D, J, K ]      [ B, C, J, K ]      [ B, D, J, K ]      [ C, D, J, K ]
+[ A, B, J, L ]      [ A, C, J, L ]      [ A, D, J, L ]      [ B, C, J, L ]      [ B, D, J, L ]      [ C, D, J, L ]
+
+[ A, B, K, L ]      [ A, C, K, L ]      [ A, D, K, L ]      [ B, C, K, L ]      [ B, D, K, L ]      [ C, D, K, L ]
+*/
+
+// for (var i = 0; i < ingredientsWithDesiredEffects.length; i++) {
+//     var ingredientWithDesiredEffect = ingredientsWithDesiredEffects[i];
+
+//     for (var j = i + 1; j < ingredientsWithDesiredEffects.length; j++) {
+//         var partnerWithDesiredEffect = ingredientsWithDesiredEffects[j];
+//         var commonGoodEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, 1);
+//         var commonBadEffects = getCommonEffects(ingredientWithDesiredEffect, partnerWithDesiredEffect, -1);
+
+//         if (!!commonGoodEffects.length || !!commonBadEffects.length) {
+//             console.log(`A potion made with [${ingredientWithDesiredEffect}] & [${partnerWithDesiredEffect}] will have:`);
+            
+//             if (!!commonGoodEffects.length) {
+//                 console.log(` - ${commonGoodEffects.length} good effects: ${commonGoodEffects}`);
+//             }
+//             if (!!commonBadEffects.length) {
+//                 console.log(` - ${commonBadEffects.length} bad effects: ${commonBadEffects}`);
+//             }
+//         }
+//     }
+// }
 
 
