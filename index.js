@@ -70,6 +70,78 @@ function getCommonEffects(ingredients) {
     return intersection;
 }
 
+function compileRawRecpie(ingredients, effects) {
+    return {
+        ingredients: ingredients.sort(),
+        goodEffects: effects.filter(e => !isBadEffect(e)).sort(),
+        badEffects: effects.filter(e => isBadEffect(e)).sort()
+    };
+}
+
+function compileFormattedRecipe(recipe) {
+    return {
+        ingredients: recipe.ingredients.reduce((text, ingredient) => {
+            if (text.length > 0) {
+                text += ", ";
+            }
+
+            text += ingredient;
+
+            return text;
+        }, ""),
+        goodEffects: recipe.goodEffects.reduce((text, effect) => {
+            if (text.length > 0) {
+                text += ", ";
+            }
+
+            text += effect;
+
+            return text;
+        }, ""),
+        badEffects: recipe.badEffects.reduce((text, effect) => {
+            if (text.length > 0) {
+                text += ", ";
+            }
+
+            text += effect;
+
+            return text;
+        }, "") || "None"
+    }
+}
+
+function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
+    if (a.badEffects.length == b.badEffects.length) {
+        if (a.ingredients.length == b.ingredients.length) {
+            if (a.goodEffects.length == b.goodEffects.length) {
+                return 0;
+            }
+            else if (a.goodEffects.length > b.goodEffects.length) {
+                return -1;
+            }
+            else /*(a.goodEffects.length < b.goodEffects.length)*/ {
+                return 1;
+            }
+        }
+        else if (a.ingredients.length > b.ingredients.length) {
+            // More ingredients is worse
+            return 1;
+        }
+        else /*(a.ingredients.length < b.ingredients.length)*/ {
+            // Fewer ingredients is better
+            return -1;
+        }
+    }
+    else if (a.badEffects.length > b.badEffects.length) {
+        return 1;
+    }
+    else /*(a.badEffects.length < b.badEffects.length)*/ {
+        return -1;
+    }
+    
+    return 0;
+}
+
 // Working!
 // const wetrunIngredients = [ "Kagouti Hide", "Kwama Cuttle", "Scales", "Shalk Resin" ];
 // const fishIngredients = [ "Scrib Jerky", "Scales", "Luminous Russula", "Hackle-Lo Leaf" ];
@@ -81,16 +153,15 @@ function getCommonEffects(ingredients) {
 //console.log(commonEffects);
 
 const desiredEffects = [
+    // "Swift Swim",
+    // "Water Breathing"
+
     "Water Walking",
     "Fortify Speed",
-    "Restore Fatigue",
+    //"Restore Fatigue"
 ]
 const possibleIngredients = getIngredientsWithEffects(desiredEffects);
-
-// for (let combo = 2; combo <= 4; combo++) {
-//     // Build a combo
-    
-// }
+const recipes = [];
 
 // Two ingredients
 for (let primary = 0; primary < possibleIngredients.length; primary++) {
@@ -101,7 +172,8 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
         let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
 
         if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-            console.log(`${primaryIngredient} & ${secondaryIngredient} = [${commonEffects}]`);
+            // console.log(`${primaryIngredient} & ${secondaryIngredient} = [${commonEffects}]`);
+            recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient ], commonEffects));
         }
     }
 }
@@ -118,7 +190,8 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
             let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
 
             if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} = [${commonEffects}]`);
+                //console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} = [${commonEffects}]`);
+                recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
             }
         }
     }
@@ -134,12 +207,13 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
         for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
             let tertiaryIngredient = possibleIngredients[tertiary];
             
-            for (let quaternary = secondary + 1; quaternary < possibleIngredients.length; quaternary++) {
+            for (let quaternary = tertiary + 1; quaternary < possibleIngredients.length; quaternary++) {
                 let quaternaryIngredient = possibleIngredients[quaternary];
                 let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
     
                 if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                    console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} & ${quaternaryIngredient} = [${commonEffects}]`);
+                    //console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} & ${quaternaryIngredient} = [${commonEffects}]`);
+                    recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
                 }
             }
         }
@@ -147,6 +221,10 @@ for (let primary = 0; primary < possibleIngredients.length; primary++) {
 }
 
 //console.log(possibleIngredients);
+
+let sortedRecipes = recipes.sort(sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc);
+let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
+console.log(formattedRecipes);
 
 console.log(`Fin`);
 
