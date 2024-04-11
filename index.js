@@ -147,23 +147,78 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
 // const fishIngredients = [ "Scrib Jerky", "Scales", "Luminous Russula", "Hackle-Lo Leaf" ];
 // const healpotIngredients = [ "Marshmerrow", "Wickwheat" ];
 // const manapotIngredients = [ "Belladonna Berries", "Comberry" ];
-// const cureallIngredients = [ "Willow Anther", "Netch Leather", "Muck" ];
+// const restoreAtaxiaIngredients = [ "Bonemeal", "Dreugh Wax", "Scamp Skin", "Scrib Cabbage" ];
+// const restoreBrownRotRecipe = [ "Dreugh Wax", "Guar Hide", "Scamp Skin" ];
+// const restoreDampwormRecipe = [ "Raw Ebony", "Resin" ];
+// const restoreDroopsRecipe = [ "Dreugh Wax", "Scamp Skin" ];
+// const restoreGreensporeRecipe = [ "Guar Hide", "Heather" ];
+// const restoreHelljointRecipe = [ "Bonemeal", "Raw Ebony", "Resin", "Sload Soap" ];
+// const restoreRattlesRecipe = [ "Bonemeal", "Scathecraw", "Sload Soap", "Trama Root" ];
+// const restoreRockjointRecipe = [ "Bonemeal", "Sload Soap" ];
+// const restoreRotboneRecipe = [ "Chokeweed", "Hound Meat" ];
+// const restoreRustChancreRecipe = [ "Guar Hide", "Heather", "Raw Ebony", "Resin" ];
+// const restoreSwampFeverRecipe = [ "Dreugh Wax", "Gold Kanet", "Gravedust", "Scales" ];
+// const restoreYellowTickRecipe = [ "Dreugh Wax", "Raw Ebony", "Resin", "Scamp Skin" ];
 // const commonEffects = getCommonEffects(wetrunIngredients);
 
 //console.log(commonEffects);
 
 const desiredEffects = [
-    "Swift Swim",
-    "Water Breathing",
-    "Restore Fatigue"
+    // "Restore Acrobatics",
+    // "Restore Agility",
+    // "Restore Athletics",
+    // "Restore Endurance",
+    // "Restore Fatigue",
+    // "Restore Intelligence",
+    // "Restore Personality",
+    // "Restore Speed",
+    // "Restore Strength",
+    // "Restore Willpower",
 
-    // "Water Walking",
-    // "Fortify Speed",
-    //"Restore Fatigue"
+    // "Restore Health",
+    // "Fortify Health"
+
+    // "Restore Magicka",
+    // "Fortify Magicka"
+
+    "Water Breathing",
+    "Swift Swim",
+    // "Fortify Speed"
+];
+const unavailableIngredients = [
+    "Adamantium Ore",
+    "Bread",
+    "Durzog Meat",
+    "Golden Sedge Flowers",
+    "Grahl Eyeball",
+    "Heartwood",
+    "Horn Lily Bulb",
+    "Lloramor Spines",
+    "Meadow Rye",
+    "Meteor Slime",
+    "Nirthfly Stalks",
+    "Noble Sedge Flowers",
+    "Raw Stalhrim",
+    "Scrap Metal",
+    "Scrib Cabbage",
+    "Sweetpulp",
+    "Timsa-Come-By flowers",
+    "Wolfsbane Petals"
 ];
 const excludeAllBadEffects = true;
 const matchDesiredEffectsExactly = true;
-const possibleIngredients = getIngredientsWithEffects(desiredEffects);
+let possibleIngredients = getIngredientsWithEffects(desiredEffects);
+
+if (unavailableIngredients.length > 0) {
+    let countBeforeFilter = possibleIngredients.length;
+
+    possibleIngredients = possibleIngredients.filter(pi => !unavailableIngredients.includes(pi));
+
+    if (countBeforeFilter != possibleIngredients.length) {
+        console.warn(`${countBeforeFilter - possibleIngredients.length} of ${countBeforeFilter} unavailable ingredients filtered out.`);
+    }
+}
+
 let recipes = [];
 
 // Two ingredients
@@ -230,7 +285,9 @@ if (excludeAllBadEffects) {
 
     recipes = recipes.filter(r => r.badEffects.length < 1);
 
-    console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with bad effects filtered out.`);
+    if (countBeforeFilter != recipes.length) {
+        console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with bad effects filtered out.`);
+    }
 }
 
 if (matchDesiredEffectsExactly) {
@@ -238,14 +295,17 @@ if (matchDesiredEffectsExactly) {
 
     recipes = recipes.filter(r => r.goodEffects.length == desiredEffects.length);
 
-    console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with additional good effects filtered out.`);
+    if (countBeforeFilter != recipes.length) {
+        console.warn(`${countBeforeFilter - recipes.length} of ${countBeforeFilter} recipies with additional good effects filtered out.`);
+    }
 }
 
 let sortedRecipes = recipes.sort(sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc);
 let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
-console.log(formattedRecipes);
 
-console.log(`Fin`);
+formattedRecipes.map(fr => console.log(JSON.stringify(fr)));
+
+console.log(`\nFin`);
 
 // const comboMin = 2;
 // const comboLimit = 4;
