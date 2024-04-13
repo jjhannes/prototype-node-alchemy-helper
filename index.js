@@ -161,6 +161,10 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
 // const restoreYellowTickRecipe = [ "Dreugh Wax", "Raw Ebony", "Resin", "Scamp Skin" ];
 // const commonEffects = getCommonEffects(wetrunIngredients);
 
+// console.log(getCommonEffects(["Scales", "Kwama Cuttle"]));
+
+// return;
+
 //console.log(commonEffects);
 
 const desiredEffects = [
@@ -181,32 +185,34 @@ const desiredEffects = [
     // "Restore Magicka",
     // "Fortify Magicka"
 
-    "Water Breathing",
-    "Swift Swim",
-    // "Fortify Speed"
+    // "Water Breathing",
+    // "Swift Swim",
+
+    "Water Walking",
+    "Fortify Speed"
 ];
 const unavailableIngredients = [
-    "Adamantium Ore",
-    "Bread",
-    "Durzog Meat",
-    "Golden Sedge Flowers",
-    "Grahl Eyeball",
-    "Heartwood",
-    "Horn Lily Bulb",
-    "Lloramor Spines",
-    "Meadow Rye",
-    "Meteor Slime",
-    "Nirthfly Stalks",
-    "Noble Sedge Flowers",
-    "Raw Stalhrim",
-    "Scrap Metal",
-    "Scrib Cabbage",
-    "Sweetpulp",
-    "Timsa-Come-By flowers",
-    "Wolfsbane Petals"
+    // "Adamantium Ore",
+    // "Bread",
+    // "Durzog Meat",
+    // "Golden Sedge Flowers",
+    // "Grahl Eyeball",
+    // "Heartwood",
+    // "Horn Lily Bulb",
+    // "Lloramor Spines",
+    // "Meadow Rye",
+    // "Meteor Slime",
+    // "Nirthfly Stalks",
+    // "Noble Sedge Flowers",
+    // "Raw Stalhrim",
+    // "Scrap Metal",
+    // "Scrib Cabbage",
+    // "Sweetpulp",
+    // "Timsa-Come-By flowers",
+    // "Wolfsbane Petals"
 ];
-const excludeAllBadEffects = true;
-const matchDesiredEffectsExactly = true;
+const excludeAllBadEffects = false;
+const matchDesiredEffectsExactly = false;
 let possibleIngredients = getIngredientsWithEffects(desiredEffects);
 
 if (unavailableIngredients.length > 0) {
@@ -307,6 +313,7 @@ if (matchDesiredEffectsExactly) {
 let sortedRecipes = recipes.sort(sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc);
 let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
 
+console.log(`There are ${formattedRecipes.length} recipies that will give you ${desiredEffects}:`);
 formattedRecipes.map(fr => console.log(JSON.stringify(fr)));
 
 console.log(`\nFin (${_loops})`);
