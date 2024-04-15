@@ -187,9 +187,19 @@ const desiredEffects = [
 
     // "Water Breathing",
     // "Swift Swim",
+    // "Restore Fatigue"
 
-    "Water Walking",
-    "Fortify Speed"
+    // "Water Walking",
+    // "Fortify Speed"
+
+    // "Cure Common Disease",
+    // "Cure Poison"
+
+    // "Cure Blight Disease",
+    // "Cure Poison"
+    
+    "Cure Common Disease",
+    "Cure Blight Disease",
 ];
 const unavailableIngredients = [
     // "Adamantium Ore",
