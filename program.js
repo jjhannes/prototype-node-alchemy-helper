@@ -1,4 +1,5 @@
 
+const prompt = require("prompt-sync")({ sigint: true });
 const potions = require("./potions-mediator");
 
 /*
@@ -23,34 +24,105 @@ const restoreYellowTickRecipe = [ "Dreugh Wax", "Raw Ebony", "Resin", "Scamp Ski
 const commonEffects = getCommonEffects(wetrunIngredients);
 */
 
-const desiredEffects = [
-    "Cure Common Disease",
-    "Cure Blight Disease",
-];
-const unavailableIngredients = [
-    // "Adamantium Ore",
-    // "Bread",
-    // "Durzog Meat",
-    // "Golden Sedge Flowers",
-    // "Grahl Eyeball",
-    // "Heartwood",
-    // "Horn Lily Bulb",
-    // "Lloramor Spines",
-    // "Meadow Rye",
-    // "Meteor Slime",
-    // "Nirthfly Stalks",
-    // "Noble Sedge Flowers",
-    // "Raw Stalhrim",
-    // "Scrap Metal",
-    // "Scrib Cabbage",
-    // "Sweetpulp",
-    // "Timsa-Come-By flowers",
-    // "Wolfsbane Petals"
-];
-const excludeAllBadEffects = false;
-const matchDesiredEffectsExactly = false;
+function promptEmptyInput() {
+    console.log();
+    console.log("You've not provided any desired effects. Please provide a desired effect.");
+}
 
-let viableRecipes = potions.determineRecipe(desiredEffects, excludeAllBadEffects, matchDesiredEffectsExactly, unavailableIngredients);
+function promptDescription() {
+    console.log("What effects would you like your potion to have?");
+    console.log("(Press <Enter> to submit and provide additional desired effects)");
+    console.log("(Press <Enter> again, i.e. empty value, to accept your selection)");
+}
 
-console.log(`There are ${viableRecipes.length} recipes that grant ${desiredEffects}:\n`);
-viableRecipes.map(vr => console.log(vr));
+function promptDesiredEffectsAndCalculateRecipe() {
+    promptDescription();
+
+    let desiredEffects = [];
+    let done = false;
+    let input = null;
+
+    while (!done)
+    {
+        input = prompt("");
+        input = input.trim();
+
+        if (!input)
+        {
+            // Done OR empty input
+            if (desiredEffects.length < 1)
+            {
+                // Empty input
+                promptEmptyInput();
+
+                continue;
+            }
+            else
+            {
+                done = true;
+
+                continue;
+            }
+        }
+        else
+        {
+            desiredEffects.push(input);
+        }
+    }
+    
+    let possibleRecipes = potions.determineRecipe(desiredEffects);
+
+    if (possibleRecipes.length < 1)
+    {
+        console.log(`There are no recipes that will grant [${desiredEffects.join(" & ")}]`);
+    }
+    else
+    {
+        console.log(`There are ${possibleRecipes.length} recipes that will grant [${desiredEffects.join(" & ")}]:`);
+        console.log();
+
+        for (recipe of possibleRecipes)
+        {
+            console.log(recipe);
+            console.log();
+        }
+    }
+}
+
+function main() {
+    promptDesiredEffectsAndCalculateRecipe();
+}
+
+// const desiredEffects = [
+//     "Cure Common Disease",
+//     "Cure Blight Disease",
+// ];
+// const unavailableIngredients = [
+//     // "Adamantium Ore",
+//     // "Bread",
+//     // "Durzog Meat",
+//     // "Golden Sedge Flowers",
+//     // "Grahl Eyeball",
+//     // "Heartwood",
+//     // "Horn Lily Bulb",
+//     // "Lloramor Spines",
+//     // "Meadow Rye",
+//     // "Meteor Slime",
+//     // "Nirthfly Stalks",
+//     // "Noble Sedge Flowers",
+//     // "Raw Stalhrim",
+//     // "Scrap Metal",
+//     // "Scrib Cabbage",
+//     // "Sweetpulp",
+//     // "Timsa-Come-By flowers",
+//     // "Wolfsbane Petals"
+// ];
+// const excludeAllBadEffects = false;
+// const matchDesiredEffectsExactly = false;
+
+// let viableRecipes = potions.determineRecipe(desiredEffects, excludeAllBadEffects, matchDesiredEffectsExactly, unavailableIngredients);
+
+// console.log(`There are ${viableRecipes.length} recipes that grant ${desiredEffects}:\n`);
+// viableRecipes.map(vr => console.log(vr));
+
+main();

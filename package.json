@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
+    "prompt-sync": "^4.2.0",
     "require": "^2.4.20"
   }
 }
