@@ -70,6 +70,66 @@ function getCommonEffects(ingredients) {
     return intersection;
 }
 
+function determineRecipe(desiredEffects) {
+    let viableRecipes = [];
+
+    // Two ingredients
+    for (let primary = 0; primary < possibleIngredients.length; primary++) {
+        let primaryIngredient = possibleIngredients[primary];
+    
+        for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+            let secondaryIngredient = possibleIngredients[secondary];
+            let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
+    
+            if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient ], commonEffects));
+            }
+        }
+    }
+    
+    // Three ingredients
+    for (let primary = 0; primary < possibleIngredients.length; primary++) {
+        let primaryIngredient = possibleIngredients[primary];
+    
+        for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+            let secondaryIngredient = possibleIngredients[secondary];
+            
+            for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
+                let tertiaryIngredient = possibleIngredients[tertiary];
+                let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
+    
+                if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                    viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
+                }
+            }
+        }
+    }
+    
+    // Four ingredients
+    for (let primary = 0; primary < possibleIngredients.length; primary++) {
+        let primaryIngredient = possibleIngredients[primary];
+    
+        for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
+            let secondaryIngredient = possibleIngredients[secondary];
+            
+            for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
+                let tertiaryIngredient = possibleIngredients[tertiary];
+                
+                for (let quaternary = tertiary + 1; quaternary < possibleIngredients.length; quaternary++) {
+                    let quaternaryIngredient = possibleIngredients[quaternary];
+                    let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
+        
+                    if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                        viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
+                    }
+                }
+            }
+        }
+    }
+    
+    return viableRecipes;
+}
+
 function compileRawRecpie(ingredients, effects) {
     return {
         ingredients: ingredients.sort(),
@@ -235,71 +295,9 @@ if (unavailableIngredients.length > 0) {
     }
 }
 
-let _loops = 0;
-let recipes = [];
-
-// Two ingredients
-for (let primary = 0; primary < possibleIngredients.length; primary++) {
-    let primaryIngredient = possibleIngredients[primary];
-
-    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
-        _loops++;
-        let secondaryIngredient = possibleIngredients[secondary];
-        let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
-
-        if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-            // console.log(`${primaryIngredient} & ${secondaryIngredient} = [${commonEffects}]`);
-            recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient ], commonEffects));
-        }
-    }
-}
-
-// Three ingredients
-for (let primary = 0; primary < possibleIngredients.length; primary++) {
-    let primaryIngredient = possibleIngredients[primary];
-
-    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
-        let secondaryIngredient = possibleIngredients[secondary];
-        
-        for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
-            _loops++;
-            let tertiaryIngredient = possibleIngredients[tertiary];
-            let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
-
-            if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                //console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} = [${commonEffects}]`);
-                recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
-            }
-        }
-    }
-}
-
-// Four ingredients
-for (let primary = 0; primary < possibleIngredients.length; primary++) {
-    let primaryIngredient = possibleIngredients[primary];
-
-    for (let secondary = primary + 1; secondary < possibleIngredients.length; secondary++) {
-        let secondaryIngredient = possibleIngredients[secondary];
-        
-        for (let tertiary = secondary + 1; tertiary < possibleIngredients.length; tertiary++) {
-            let tertiaryIngredient = possibleIngredients[tertiary];
-            
-            for (let quaternary = tertiary + 1; quaternary < possibleIngredients.length; quaternary++) {
-                _loops++;
-                let quaternaryIngredient = possibleIngredients[quaternary];
-                let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
-    
-                if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                    //console.log(`${primaryIngredient} & ${secondaryIngredient} & ${tertiaryIngredient} & ${quaternaryIngredient} = [${commonEffects}]`);
-                    recipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
-                }
-            }
-        }
-    }
-}
+let recipes = determineRecipe(desiredEffects);
 
 //console.log(possibleIngredients);
-
 if (excludeAllBadEffects) {
     let countBeforeFilter = recipes.length;
 
@@ -326,4 +324,4 @@ let formattedRecipes = sortedRecipes.map(r => compileFormattedRecipe(r));
 console.log(`There are ${formattedRecipes.length} recipies that will give you ${desiredEffects}:`);
 formattedRecipes.map(fr => console.log(JSON.stringify(fr)));
 
-console.log(`\nFin (${_loops})`);
+console.log(`\nFin`);
