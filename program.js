@@ -1,5 +1,5 @@
 
-const potions = require("./potions");
+const potions = require("./potions-mediator");
 
 /*
 Known recipes
