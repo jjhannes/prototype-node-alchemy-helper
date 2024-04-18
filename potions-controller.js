@@ -1,6 +1,11 @@
 
 const potionsMediator = require("./potions-mediator");
 
+const parameterNames = {
+    desiredEffects: "de",
+    excludedIngredients: "ei"
+};
+
 function createCollectionResponse(collection) {
     return {
         count: collection.length,
@@ -10,8 +15,8 @@ function createCollectionResponse(collection) {
 
 function createEndpoints(app) {
     app.get("/neapi/v1/potions/recipes/with-effects", (request, response) => {
-        let rawDesiredEffects = request.query["de"];
-        let rawExcludedIngredients = request.query["ee"];
+        let rawDesiredEffects = request.query[parameterNames.desiredEffects];
+        let rawExcludedIngredients = request.query[parameterNames.excludedIngredients];
         let excludedIngredients = [];
 
         if (!rawDesiredEffects) {
@@ -24,7 +29,7 @@ function createEndpoints(app) {
             .map(de => de.trim());
 
         if (!!rawExcludedIngredients && rawExcludedIngredients.length > 0) {
-            excludedIngredients = request.query["ee"]
+            excludedIngredients = request.query[parameterNames.excludedIngredients]
                 .split(",")
                 .map(de => de.trim());
         }
