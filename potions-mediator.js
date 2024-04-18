@@ -225,8 +225,11 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
     
     if (exactlyMatchDerisedEffects) {
         let countBeforeFilter = viableRecipes.length;
-    
-        viableRecipes = viableRecipes.filter(r => r.goodEffects.length == desiredEffects.length);
+        
+        // viableRecipes = viableRecipes.filter(r => r.effects.length == desiredEffects.length);
+        viableRecipes = viableRecipes.filter(r => 
+            ((new Set(r.effects)).size === (new Set(desiredEffects)).size) && 
+            [...(new Set(r.effects))].every(value => (new Set(desiredEffects)).has(value)));
     
         if (countBeforeFilter != viableRecipes.length) {
             console.warn(`${countBeforeFilter - viableRecipes.length} of ${countBeforeFilter} recipies with additional good effects filtered out.`);
