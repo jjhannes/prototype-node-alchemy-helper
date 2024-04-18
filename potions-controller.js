@@ -4,7 +4,8 @@ const potionsMediator = require("./potions-mediator");
 const parameterNames = {
     desiredEffects: "de",
     excludedIngredients: "ei",
-    excludeBadPotions: "ebp"
+    excludeBadPotions: "ebp",
+    exactlyMatchDerisedEffects: "emde"
 };
 
 function createCollectionResponse(collection) {
@@ -19,9 +20,11 @@ function createEndpoints(app) {
         let rawDesiredEffects = request.query[parameterNames.desiredEffects];
         let rawExcludedIngredients = request.query[parameterNames.excludedIngredients];
         let rawExcludeBadPotions = request.query[parameterNames.excludeBadPotions];
+        let rawExactlyMatchDesiredEffects = request.query[parameterNames.exactlyMatchDerisedEffects];
         let desiredEffects = [];
         let excludedIngredients = [];
         let excludeBadPotions = false;
+        let exactlyMatchDesiredEffects = false;
 
         if (!rawDesiredEffects) {
             response.status(400);
@@ -43,8 +46,14 @@ function createEndpoints(app) {
                 rawExcludeBadPotions.toLowerCase() == "true" ||
                 rawExcludeBadPotions.toLowerCase() == "1";
         }
+
+        if (!!rawExactlyMatchDesiredEffects) {
+            exactlyMatchDesiredEffects = 
+                rawExactlyMatchDesiredEffects.toLowerCase() == "true" ||
+                rawExactlyMatchDesiredEffects.toLowerCase() == "1";
+        }
         
-        let viableRecipes = potionsMediator.determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions);
+        let viableRecipes = potionsMediator.determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
         let collectionResponse = createCollectionResponse(viableRecipes);
 
         response.send(collectionResponse);
