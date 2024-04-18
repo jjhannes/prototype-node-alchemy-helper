@@ -143,7 +143,7 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
     return 0;
 }
 
-function determineRecipe(desiredEffects, excludedIngredients = [], excludeAllBadEffects = false, matchDesiredEffectsExactly = false) {
+function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = false, matchDesiredEffectsExactly = false) {
     excludedIngredients = excludedIngredients || [];
     
     let viableRecipes = [];
@@ -213,7 +213,7 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeAllBad
         }
     }
     
-    if (excludeAllBadEffects) {
+    if (excludeBadPotions) {
         let countBeforeFilter = viableRecipes.length;
     
         viableRecipes = viableRecipes.filter(r => r.badEffects.length < 1);
