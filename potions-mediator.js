@@ -155,7 +155,7 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
         possibleIngredients = possibleIngredients.filter(pi => !excludedIngredients.includes(pi));
 
         if (countBeforeFilter != possibleIngredients.length) {
-            console.warn(`${countBeforeFilter - possibleIngredients.length} of ${countBeforeFilter} unavailable ingredients filtered out.`);
+            console.warn(`${countBeforeFilter - possibleIngredients.length} of ${countBeforeFilter} excluded ingredients filtered out.`);
         }
     }
     
