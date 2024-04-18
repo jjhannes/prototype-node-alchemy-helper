@@ -73,6 +73,7 @@ function getCommonEffects(ingredients) {
 function compileRawRecpie(ingredients, effects) {
     return {
         ingredients: ingredients.sort(),
+        effects,
         goodEffects: effects.filter(e => !isBadEffect(e)).sort(),
         badEffects: effects.filter(e => isBadEffect(e)).sort()
     };
