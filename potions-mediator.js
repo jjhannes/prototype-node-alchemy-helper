@@ -47,7 +47,7 @@ function isBadEffect(effect) {
 function getCommonEffects(ingredients) {
     const ingredientsEffects = ingredients.map(ie => getEffectsForIngredient(ie));
     let intersection = [];
-
+    
     for (let primary = 0; primary < ingredientsEffects.length; primary++) {
         let primarySet = ingredientsEffects[primary];
 
@@ -142,15 +142,16 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
     return 0;
 }
 
-function determineRecipe(desiredEffects, excludeAllBadEffects = false, matchDesiredEffectsExactly = false, unavailableIngredients = []) {
+function determineRecipe(desiredEffects, excludedIngredients = [], excludeAllBadEffects = false, matchDesiredEffectsExactly = false) {
+    excludedIngredients = excludedIngredients || [];
+    
     let viableRecipes = [];
-
     let possibleIngredients = getIngredientsWithEffects(desiredEffects);
 
-    if (unavailableIngredients.length > 0) {
+    if (excludedIngredients.length > 0) {
         let countBeforeFilter = possibleIngredients.length;
 
-        possibleIngredients = possibleIngredients.filter(pi => !unavailableIngredients.includes(pi));
+        possibleIngredients = possibleIngredients.filter(pi => !excludedIngredients.includes(pi));
 
         if (countBeforeFilter != possibleIngredients.length) {
             console.warn(`${countBeforeFilter - possibleIngredients.length} of ${countBeforeFilter} unavailable ingredients filtered out.`);
@@ -238,5 +239,5 @@ function determineRecipe(desiredEffects, excludeAllBadEffects = false, matchDesi
 }
 
 module.exports = {
-    determineRecipe
+    determineRecipe: determineRecipe
 };
