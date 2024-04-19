@@ -1,11 +1,13 @@
 
+const { response } = require("express");
 const potionsMediator = require("./potions-mediator");
-
+const apiBasePath = "/neapi/v1";
 const parameterNames = {
     desiredEffects: "de",
     excludedIngredients: "ei",
     excludeBadPotions: "ebp",
-    exactlyMatchDerisedEffects: "emde"
+    exactlyMatchDerisedEffects: "emde",
+    ingredients: "i"
 };
 
 function createCollectionResponse(collection) {
@@ -15,49 +17,78 @@ function createCollectionResponse(collection) {
     };
 }
 
-function createEndpoints(app) {
-    app.get("/neapi/v1/potions/recipes/with-effects", (request, response) => {
-        let rawDesiredEffects = request.query[parameterNames.desiredEffects];
-        let rawExcludedIngredients = request.query[parameterNames.excludedIngredients];
-        let rawExcludeBadPotions = request.query[parameterNames.excludeBadPotions];
-        let rawExactlyMatchDesiredEffects = request.query[parameterNames.exactlyMatchDerisedEffects];
-        let desiredEffects = [];
-        let excludedIngredients = [];
-        let excludeBadPotions = false;
-        let exactlyMatchDesiredEffects = false;
+function handlePotionRecipesWithEffects(request, response) {
+    let rawDesiredEffects = request.query[parameterNames.desiredEffects];
+    let rawExcludedIngredients = request.query[parameterNames.excludedIngredients];
+    let rawExcludeBadPotions = request.query[parameterNames.excludeBadPotions];
+    let rawExactlyMatchDesiredEffects = request.query[parameterNames.exactlyMatchDerisedEffects];
+    let desiredEffects = [];
+    let excludedIngredients = [];
+    let excludeBadPotions = false;
+    let exactlyMatchDesiredEffects = false;
 
-        if (!rawDesiredEffects) {
-            response.status(400);
-            response.send();
-        }
-        
-        desiredEffects = rawDesiredEffects
+    if (!rawDesiredEffects) {
+        response.status(400);
+        response.send(`Desired effects (${parameterNames.desiredEffects}) are required`);
+    }
+    
+    desiredEffects = rawDesiredEffects
+        .split(",")
+        .map(de => de.trim());
+
+    if (!!rawExcludedIngredients && rawExcludedIngredients.length > 0) {
+        excludedIngredients = request.query[parameterNames.excludedIngredients]
             .split(",")
             .map(de => de.trim());
+    }
 
-        if (!!rawExcludedIngredients && rawExcludedIngredients.length > 0) {
-            excludedIngredients = request.query[parameterNames.excludedIngredients]
-                .split(",")
-                .map(de => de.trim());
-        }
+    if (!!rawExcludeBadPotions) {
+        excludeBadPotions = 
+            rawExcludeBadPotions.toLowerCase() == "true" ||
+            rawExcludeBadPotions.toLowerCase() == "1";
+    }
 
-        if (!!rawExcludeBadPotions) {
-            excludeBadPotions = 
-                rawExcludeBadPotions.toLowerCase() == "true" ||
-                rawExcludeBadPotions.toLowerCase() == "1";
-        }
+    if (!!rawExactlyMatchDesiredEffects) {
+        exactlyMatchDesiredEffects = 
+            rawExactlyMatchDesiredEffects.toLowerCase() == "true" ||
+            rawExactlyMatchDesiredEffects.toLowerCase() == "1";
+    }
+    
+    let viableRecipes = potionsMediator.getRecipesWithDesiredEffects(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
+    let collectionResponse = createCollectionResponse(viableRecipes);
 
-        if (!!rawExactlyMatchDesiredEffects) {
-            exactlyMatchDesiredEffects = 
-                rawExactlyMatchDesiredEffects.toLowerCase() == "true" ||
-                rawExactlyMatchDesiredEffects.toLowerCase() == "1";
-        }
-        
-        let viableRecipes = potionsMediator.determineRecipe(desiredEffects, excludedIngredients, excludeBadPotions, exactlyMatchDesiredEffects);
-        let collectionResponse = createCollectionResponse(viableRecipes);
+    response.send(collectionResponse);
+}
 
-        response.send(collectionResponse);
-    });
+function handlePotionFromIngredients(request, response) {
+    let rawIngredients = request.query[parameterNames.ingredients];
+
+    if (!rawIngredients || rawIngredients.length < 1) {
+        response.status(400);
+        response.send(`Ingredients (${parameterNames.ingredients}) are required`);
+    }
+
+    let ingredients = rawIngredients
+        .split(",")
+        .map(de => de.trim());
+
+    if (ingredients.length < 2) {
+        response.status(400);
+        response.send(`A minimum of 2 ingredients are required`);
+    }
+    else if (ingredients.length > 4) {
+        response.status(400);
+        response.send(`A maximum of 4 ingredients are allowed`);
+    }
+
+    let resultingPotion = potionsMediator.getEffectsFromIngredients(ingredients);
+
+    response.send(resultingPotion);
+}
+
+function createEndpoints(app) {
+    app.get(`${apiBasePath}/potions/recipes/with-effects`, handlePotionRecipesWithEffects);
+    app.get(`${apiBasePath}/potions/from-ingredients`, handlePotionFromIngredients);
 }
 
 module.exports = {

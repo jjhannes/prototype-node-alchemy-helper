@@ -70,7 +70,7 @@ function getCommonEffects(ingredients) {
     return intersection;
 }
 
-function compileRawRecpie(ingredients, effects) {
+function compileRawRecipe(ingredients, effects) {
     return {
         ingredients: ingredients.sort(),
         effects: effects.sort(),
@@ -143,7 +143,7 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
     return 0;
 }
 
-function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPotions = false, exactlyMatchDerisedEffects = false) {
+function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], excludeBadPotions = false, exactlyMatchDerisedEffects = false) {
     excludedIngredients = excludedIngredients || [];
     
     let viableRecipes = [];
@@ -168,7 +168,7 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
             let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
     
             if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient ], commonEffects));
+                viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient ], commonEffects));
             }
         }
     }
@@ -185,7 +185,7 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
                 let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
     
                 if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                    viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
+                    viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
                 }
             }
         }
@@ -206,7 +206,7 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
                     let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
         
                     if (!!desiredEffects.every(de => commonEffects.includes(de))) {
-                        viableRecipes.push(compileRawRecpie([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
+                        viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
                     }
                 }
             }
@@ -242,6 +242,14 @@ function determineRecipe(desiredEffects, excludedIngredients = [], excludeBadPot
     return sortedRecipes;
 }
 
+function getEffectsFromIngredients(ingredients) {
+    let commonEffects = getCommonEffects(ingredients);
+    let compiledRecipe = compileRawRecipe(ingredients, commonEffects);
+
+    return compiledRecipe;
+}
+
 module.exports = {
-    determineRecipe: determineRecipe
+    getRecipesWithDesiredEffects: getRecipesWithDesiredEffects,
+    getEffectsFromIngredients: getEffectsFromIngredients
 };

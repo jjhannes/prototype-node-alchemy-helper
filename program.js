@@ -70,7 +70,7 @@ function promptDesiredEffectsAndCalculateRecipe() {
         }
     }
     
-    let possibleRecipes = potions.determineRecipe(desiredEffects);
+    let possibleRecipes = potions.getRecipesWithDesiredEffects(desiredEffects);
 
     if (possibleRecipes.length < 1)
     {
