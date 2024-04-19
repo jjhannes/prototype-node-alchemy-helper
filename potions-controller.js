@@ -30,11 +30,21 @@ function handlePotionRecipesWithEffects(request, response) {
     if (!rawDesiredEffects) {
         response.status(400);
         response.send(`Desired effects (${parameterNames.desiredEffects}) are required`);
+
+        return;
     }
     
     desiredEffects = rawDesiredEffects
         .split(",")
         .map(de => de.trim());
+    let invalidEffects = potionsMediator.validateEffects(desiredEffects);
+
+    if (invalidEffects.length > 0) {
+        response.status(400);
+        response.send(`Invalid desired effects were provided: [${invalidEffects.join(", ")}]`);
+
+        return;
+    }
 
     if (!!rawExcludedIngredients && rawExcludedIngredients.length > 0) {
         excludedIngredients = request.query[parameterNames.excludedIngredients]
@@ -66,19 +76,33 @@ function handlePotionFromIngredients(request, response) {
     if (!rawIngredients || rawIngredients.length < 1) {
         response.status(400);
         response.send(`Ingredients (${parameterNames.ingredients}) are required`);
+
+        return;
     }
 
     let ingredients = rawIngredients
         .split(",")
         .map(de => de.trim());
+    let invalidIngredients = potionsMediator.validateIngredients(ingredients);
+
+    if (invalidIngredients.length > 0) {
+        response.status(400);
+        response.send(`Invalid ingredients were provided: [${invalidIngredients.join(", ")}]`);
+
+        return;
+    }
 
     if (ingredients.length < 2) {
         response.status(400);
         response.send(`A minimum of 2 ingredients are required`);
+
+        return;
     }
     else if (ingredients.length > 4) {
         response.status(400);
         response.send(`A maximum of 4 ingredients are allowed`);
+
+        return;
     }
 
     let resultingPotion = potionsMediator.getRecipeFromIngredients(ingredients);

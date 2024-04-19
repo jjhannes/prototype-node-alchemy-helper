@@ -27,6 +27,23 @@ function isIngredientEffect(ingredient, effect) {
     return !!ingredientEffects.find(ie => ie == effect);
 }
 
+function isIngredient(ingredient) {
+    return Object.keys(data).includes(ingredient);
+}
+
+function isEffect(effect) {
+    flattenedEffects = Object.keys(data)
+        .reduce((accumulator, ingredient) => {
+            let ingredientEffects = data[ingredient];
+            accumulator = accumulator.concat(ingredientEffects)
+            let accumulatorSet = new Set(accumulator);
+            
+            return Array.from(accumulatorSet);
+        }, []);
+
+    return flattenedEffects.includes(effect);
+}
+
 function isBadEffect(effect) {
     // Requires toLower or toUpper
     effect = effect.toLowerCase();
@@ -143,6 +160,20 @@ function sort_BadEffectsAsc_IngredientsAsc_GoodEffectsDesc(a, b) {
     return 0;
 }
 
+// Takes a collection of ingredients and returns any ingredients that are invalid.
+// That means if the resulting collection is empty, all given ingredients are valid.
+// Conversely, if the any items are returned, those ingredients are invalid
+function validateIngredients(ingredients) {
+    return ingredients.filter(i => !isIngredient(i));
+}
+
+// Takes a collection of effects and returns any effects that are invalid.
+// That means if the resulting collection is empty, all given effects are valid.
+// Conversely, if the any items are returned, those effects are invalid
+function validateEffects(effects) {
+    return effects.filter(e => !isEffect(e));
+}
+
 function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], excludeBadPotions = false, exactlyMatchDerisedEffects = false) {
     excludedIngredients = excludedIngredients || [];
     
@@ -251,5 +282,7 @@ function getRecipeFromIngredients(ingredients) {
 
 module.exports = {
     getRecipesWithDesiredEffects: getRecipesWithDesiredEffects,
-    getRecipeFromIngredients: getRecipeFromIngredients
+    getRecipeFromIngredients: getRecipeFromIngredients,
+    validateIngredients: validateIngredients,
+    validateEffects: validateEffects
 };
