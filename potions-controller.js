@@ -81,7 +81,7 @@ function handlePotionFromIngredients(request, response) {
         response.send(`A maximum of 4 ingredients are allowed`);
     }
 
-    let resultingPotion = potionsMediator.getEffectsFromIngredients(ingredients);
+    let resultingPotion = potionsMediator.getRecipeFromIngredients(ingredients);
 
     response.send(resultingPotion);
 }

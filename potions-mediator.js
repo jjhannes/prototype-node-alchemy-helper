@@ -242,7 +242,7 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
     return sortedRecipes;
 }
 
-function getEffectsFromIngredients(ingredients) {
+function getRecipeFromIngredients(ingredients) {
     let commonEffects = getCommonEffects(ingredients);
     let compiledRecipe = compileRawRecipe(ingredients, commonEffects);
 
@@ -251,5 +251,5 @@ function getEffectsFromIngredients(ingredients) {
 
 module.exports = {
     getRecipesWithDesiredEffects: getRecipesWithDesiredEffects,
-    getEffectsFromIngredients: getEffectsFromIngredients
+    getRecipeFromIngredients: getRecipeFromIngredients
 };
