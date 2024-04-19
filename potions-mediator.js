@@ -2,7 +2,10 @@
 const data = require("./ingredient-effect.json");
 
 function getEffectsForIngredient(ingredient) {
-    return data[ingredient];
+    let ingredientKey = Object.keys(data)
+        .filter(k => k.toLowerCase() == ingredient.toLowerCase());
+
+    return data[ingredientKey];
 }
 
 function getIngredientsWithEffects(effects) {
@@ -12,8 +15,8 @@ function getIngredientsWithEffects(effects) {
         var ingredientEffects = getEffectsForIngredient(ingredient);
 
         effects.forEach(effect => {
-            if (!!ingredientEffects.find(ie => ie == effect))
-                if (!ingredients.find(i => ingredient == i))
+            if (!!ingredientEffects.find(ie => ie.toLowerCase() == effect.toLowerCase()))
+                if (!ingredients.find(i => ingredient.toLowerCase() == i.toLowerCase()))
                     ingredients.push(ingredient);
         })
     });
@@ -28,20 +31,21 @@ function isIngredientEffect(ingredient, effect) {
 }
 
 function isIngredient(ingredient) {
-    return Object.keys(data).includes(ingredient);
+    return Object.keys(data)
+        .some(k => k.toLowerCase() == ingredient.toLowerCase());
 }
 
 function isEffect(effect) {
     flattenedEffects = Object.keys(data)
         .reduce((accumulator, ingredient) => {
-            let ingredientEffects = data[ingredient];
+            let ingredientEffects = getEffectsForIngredient(ingredient);
             accumulator = accumulator.concat(ingredientEffects)
             let accumulatorSet = new Set(accumulator);
             
             return Array.from(accumulatorSet);
         }, []);
 
-    return flattenedEffects.includes(effect);
+    return flattenedEffects.some(e => e.toLowerCase() == effect.toLowerCase());
 }
 
 function isBadEffect(effect) {
@@ -70,11 +74,11 @@ function getCommonEffects(ingredients) {
 
         for (let secondary = primary + 1; secondary < ingredientsEffects.length; secondary++) {
             let secondarySet = ingredientsEffects[secondary];
-            let matches = primarySet.filter(pe => secondarySet.includes(pe));
+            let matches = primarySet.filter(pe => secondarySet.some(se => se.toLowerCase() == pe.toLowerCase()));
 
             if (!!matches.length) {
                 intersection = matches.reduce((accumulator, effect) => {
-                    if (!accumulator.includes(effect)) {
+                    if (!accumulator.some(ae => ae.toLowerCase() == effect.toLowerCase())) {
                         accumulator.push(effect);
                     }
                     
@@ -183,7 +187,7 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
     if (excludedIngredients.length > 0) {
         let countBeforeFilter = possibleIngredients.length;
 
-        possibleIngredients = possibleIngredients.filter(pi => !excludedIngredients.includes(pi));
+        possibleIngredients = possibleIngredients.filter(pi => !excludedIngredients.some(ei => ei.toLowerCase() == pi.toLowerCase()));
 
         if (countBeforeFilter != possibleIngredients.length) {
             console.warn(`${countBeforeFilter - possibleIngredients.length} of ${countBeforeFilter} excluded ingredients filtered out.`);
@@ -198,7 +202,7 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
             let secondaryIngredient = possibleIngredients[secondary];
             let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient ]);
     
-            if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+            if (!!desiredEffects.every(de => commonEffects.some(ce => ce.toLowerCase() == de.toLowerCase()))) {
                 viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient ], commonEffects));
             }
         }
@@ -215,7 +219,7 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
                 let tertiaryIngredient = possibleIngredients[tertiary];
                 let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient ]);
     
-                if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                if (!!desiredEffects.every(de => commonEffects.some(ce => ce.toLowerCase() == de.toLowerCase()))) {
                     viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient ], commonEffects));
                 }
             }
@@ -236,7 +240,7 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
                     let quaternaryIngredient = possibleIngredients[quaternary];
                     let commonEffects = getCommonEffects([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ]);
         
-                    if (!!desiredEffects.every(de => commonEffects.includes(de))) {
+                    if (!!desiredEffects.every(de => commonEffects.some(ce => ce.toLowerCase() == de.toLowerCase()))) {
                         viableRecipes.push(compileRawRecipe([ primaryIngredient, secondaryIngredient, tertiaryIngredient, quaternaryIngredient ], commonEffects));
                     }
                 }
@@ -258,9 +262,13 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
         let countBeforeFilter = viableRecipes.length;
         
         // viableRecipes = viableRecipes.filter(r => r.effects.length == desiredEffects.length);
-        viableRecipes = viableRecipes.filter(r => 
-            ((new Set(r.effects)).size === (new Set(desiredEffects)).size) && 
-            [...(new Set(r.effects))].every(value => (new Set(desiredEffects)).has(value)));
+        let desiredEffectsLowerCase = desiredEffects.map(de => de.toLowerCase());
+        viableRecipes = viableRecipes.filter(r => {
+            let viableRecipeEffectLowerCase = r.effects.map(vre => vre.toLowerCase());
+
+            return ((new Set(viableRecipeEffectLowerCase)).size === (new Set(desiredEffectsLowerCase)).size) && 
+                [...(new Set(viableRecipeEffectLowerCase))].every(value => (new Set(desiredEffectsLowerCase)).has(value))
+        });
     
         if (countBeforeFilter != viableRecipes.length) {
             console.warn(`${countBeforeFilter - viableRecipes.length} of ${countBeforeFilter} recipies with additional good effects filtered out.`);
