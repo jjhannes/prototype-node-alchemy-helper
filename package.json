@@ -1,16 +1,19 @@
 {
-  "name": "data-structure",
+  "name": "prototype-node-alchemy-helper",
   "version": "1.0.0",
-  "description": "",
+  "description": "Determine potions from ingredients and calculate ingredient combinations from desired effects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
     "prompt-sync": "^4.2.0",
-    "require": "^2.4.20"
+    "require": "^0.4.4"
+  },
+  "devDependencies": {
+    "mocha": "^10.4.0"
   }
 }

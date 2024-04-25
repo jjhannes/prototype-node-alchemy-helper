@@ -1,5 +1,4 @@
 
-const { response } = require("express");
 const potionsMediator = require("./potions-mediator");
 const apiBasePath = "/neapi/v1";
 const parameterNames = {

@@ -283,7 +283,13 @@ function getRecipesWithDesiredEffects(desiredEffects, excludedIngredients = [], 
 
 function getRecipeFromIngredients(ingredients) {
     let commonEffects = getCommonEffects(ingredients);
-    let compiledRecipe = compileRawRecipe(ingredients, commonEffects);
+    let sourceIngredients = Object.keys(data).reduce((acc, key) => {
+        if (ingredients.some(i => i.toLowerCase() == key.toLowerCase()))
+            acc.push(key);
+
+        return acc;
+    }, []);
+    let compiledRecipe = compileRawRecipe(sourceIngredients, commonEffects);
 
     return compiledRecipe;
 }
