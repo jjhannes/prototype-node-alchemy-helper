@@ -11,9 +11,9 @@ var files;
 
 //Define Mocha
 var mocha = new Mocha({
-  timeout: 60000,
-  reporter: 'spec',
-  globals: ['Associations', 'CREATE_TEST_WATERLINE', 'DELETE_TEST_WATERLINE']
+    timeout: 60000,
+    reporter: 'spec',
+    globals: ['Associations', 'CREATE_TEST_WATERLINE', 'DELETE_TEST_WATERLINE']
 });
 
 args.forEach(mocha.addFile.bind(mocha));
