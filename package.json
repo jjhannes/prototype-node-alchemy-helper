@@ -4,7 +4,8 @@
   "description": "Determine potions from ingredients and calculate ingredient combinations from desired effects",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
