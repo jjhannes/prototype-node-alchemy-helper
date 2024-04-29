@@ -140,11 +140,11 @@ describe("potions-mediator", () => {
 
         it("should return exactly all the desired effects", () => {
             let desiredEffects = [ "Fortify Fatigue", "Restore Fatigue" ];
-            let resultingRecipes = potionsMediator.getRecipesWithDesiredEffects(desiredEffects);
+            let resultingRecipes = potionsMediator.getRecipesWithDesiredEffects(desiredEffects, [], false, true);
 
             assert.equal(resultingRecipes.every(rr => rr.effects.length == desiredEffects.length), true);
             // assert.equal(resultingRecipes.every(rr => new Set(rr.effects).every(rre => new Set(desiredEffects).has(rre))), true);
-            assert.equal(desiredEffects.every(de => resultingRecipes.every(rr => new Set(rr.effects).has(de)), true));
+            assert.equal(desiredEffects.every(de => resultingRecipes.every(rr => new Set(rr.effects).has(de))), true);
         });
     });
 
