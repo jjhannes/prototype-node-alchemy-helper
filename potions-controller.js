@@ -110,7 +110,7 @@ function handlePotionFromIngredients(request, response) {
 }
 
 function createEndpoints(app) {
-    app.get(`/`, (request, response) => response.send(`Potions helper running`));
+    app.get(`/`, (request, response) => response.send(`NEAPI running`));
     app.get(`${apiBasePath}/potions/recipes/with-effects`, handlePotionRecipesWithEffects);
     app.get(`${apiBasePath}/potions/from-ingredients`, handlePotionFromIngredients);
 }

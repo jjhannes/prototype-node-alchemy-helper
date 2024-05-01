@@ -40,6 +40,15 @@ describe("potions-mediator", () => {
             assert.equal(result.length, expected.length);
             assert.deepEqual(result, expected);
         });
+
+        it("should return a list of invalid effects", () => {
+            let input = [ "Super Strength" ];
+            let result = potionsMediator.validateEffects(input);
+            let expected = input.slice();
+
+            assert.equal(result.length, expected.length);
+            assert.equal(input.every(i => new Set(expected).has(i)), true);
+        });
     });
 
     // Ingredients validation
