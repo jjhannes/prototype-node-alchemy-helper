@@ -1,1 +1,1 @@
-build -t prototype-node-alchemy-helper .
+docker build -t prototype-node-alchemy-helper .
