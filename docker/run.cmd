@@ -1,1 +1,1 @@
-docker run -e NODE_ENV_PLATFORM=DOCKER -dp 127.0.0.1:16667:6667 prototype-node-alchemy-helper
+docker run -e ENV_PLATFORM=DOCKER -dp 127.0.0.1:16667:6667 prototype-node-alchemy-helper
